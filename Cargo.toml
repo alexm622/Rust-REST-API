@@ -1,0 +1,12 @@
+[package]
+name = "rest"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+actix-web = "2.0"
+actix-rt = "1.0"
+serde = "1.0.114"
+simple_logger = "1.6.0"
+log = "0.4.8"
+redis = "0.8.0"
