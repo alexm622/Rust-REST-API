@@ -48,7 +48,7 @@ mod tests {
         let value: String = "test_value".to_owned();
         
         let result: RedisResult<String> = db_utils::set_to_db(&key, &value);
-        if(result.is_err()){
+        if result.is_err(){
             let error: ErrorKind = result.err().unwrap().kind();
             let e : bool = error == ErrorKind::IoError;
             assert_eq!(e, true);
