@@ -23,3 +23,38 @@ pub mod db_utils{
         result
     }
 }
+
+#[cfg(test)]
+mod tests {
+    extern crate redis;
+    
+    use super::db_utils;
+    use redis::{RedisResult, ErrorKind};
+
+    #[test]
+    fn fetch_from_db(){
+        let key: String = "this_shouldnt_exist".to_owned();
+        
+        let result: RedisResult<String> = db_utils::fetch_from_db(&key);
+        let error: ErrorKind = result.err().unwrap().kind();
+        let ne : bool = error == ErrorKind::IoError;
+        let e : bool = error == ErrorKind::TypeError;
+        assert_eq!((ne || e), true);
+    }
+
+    #[test]
+    fn set_to_db(){
+        let key: String = "test_key".to_owned();
+        let value: String = "test_value".to_owned();
+        
+        let result: RedisResult<String> = db_utils::set_to_db(&key, &value);
+        if(result.is_err()){
+            let error: ErrorKind = result.err().unwrap().kind();
+            let e : bool = error == ErrorKind::IoError;
+            assert_eq!(e, true);
+        }else{
+            assert_eq!(result.unwrap(), "OK");
+        }
+
+    }
+}
