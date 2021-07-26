@@ -11,6 +11,12 @@ pub mod db_tools;
 
 use db_tools::{db_request_handlers};
 
+#[path = "./rest_server/httpGet.rs"]
+pub mod http_get;
+
+use http_get::{api_requests};
+
+
 #[derive(Serialize, Deserialize)]
 pub struct Request {
     pub name: String,
@@ -23,6 +29,7 @@ pub fn general_routes(cfg: &mut web::ServiceConfig) {
     
     cfg.service(web::resource("/redis&key={key}").route(web::get().to(db_request_handlers::redis_get_handler)));
     cfg.route("/redis", web::post().to(db_request_handlers::redis_post_handler));
+    cfg.route("/apitest", web::get().to(api_requests::api_request));
     
 }
 
