@@ -1,5 +1,4 @@
 pub mod api_requests {
-    extern crate reqwest; // 0.9.18
     use actix_web::{ HttpResponse};
     use actix_web::client::Client;
     use trust_dns_resolver::Resolver;
