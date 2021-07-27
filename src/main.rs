@@ -6,15 +6,21 @@ use simple_logger::{SimpleLogger};
 use log::LevelFilter;
 
 
-#[path = "./rest_server/dbTools.rs"]
-pub mod db_tools;
 
-use db_tools::{db_request_handlers};
+pub mod rest_server{
+    pub mod db_tools;
+    pub mod http_requester;
+}
+pub mod redis_tools{
+    pub mod db_utils;
+}
 
-#[path = "./rest_server/httpGet.rs"]
-pub mod http_get;
 
-use http_get::{api_requests};
+
+use rest_server::db_tools::{db_request_handlers};
+
+
+use rest_server::http_requester::{api_requests};
 
 
 #[derive(Serialize, Deserialize)]

@@ -1,13 +1,13 @@
+
 pub mod db_request_handlers {
     use actix_web::{ web, HttpResponse};
     use redis::{RedisResult, RedisError};
     use serde::{Serialize, Deserialize};
 
     
-    #[path = "../../redisTools/redisUtils.rs"]
-    mod redis_utils;
+    use crate::redis_tools::db_utils::{db_utils};
 
-    use redis_utils::{db_utils};
+    
 
     #[derive(Serialize, Deserialize)]
     pub struct RedisPost {
