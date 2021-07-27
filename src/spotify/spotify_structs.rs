@@ -92,9 +92,6 @@ pub mod artist {
         pub images: Vec<Image>,
     }
 
-    
-
-    
 
 }
 
