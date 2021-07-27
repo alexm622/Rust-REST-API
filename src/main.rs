@@ -14,6 +14,9 @@ pub mod rest_server{
 pub mod redis_tools{
     pub mod db_utils;
 }
+pub mod spotify{
+    pub mod spotify_structs;
+}
 
 
 
