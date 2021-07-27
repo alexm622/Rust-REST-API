@@ -4,16 +4,25 @@ pub mod api_requests {
     use trust_dns_resolver::Resolver;
     use trust_dns_resolver::config::*;
     
-    use serde::{Deserialize};
+    use serde::{Serialize, Deserialize};
 
-    #[derive(Deserialize)]
-    pub struct RestRequest {
+    #[derive(Serialize,Deserialize)]
+    pub struct ApiResponse {
         pub origin: String,
         pub url: String,
+        headers: Headers,
+    }
+    
+    #[derive(Serialize,Deserialize)]
+    pub struct Headers{
+        content_length: String,
+        host: String,
+        date: String,
+        x_amzn_trace_id: String,
     }
 
     
-    async fn get(link: &str) -> Result<String, ()>{
+    async fn get(link: &str) -> std::result::Result<String, ()>{
         //create a dns resolver
         let resolver = Resolver::new(ResolverConfig::default(), ResolverOpts::default()).unwrap();
 
@@ -21,11 +30,12 @@ pub mod api_requests {
         let split_proto = link.split("//").collect::<Vec<&str>>();
 
         //split on "/"
-        let split = split_proto[1].split("/").collect::<Vec<&str>>();
+        let mut split = split_proto[1].split("/").collect::<Vec<&str>>();
+        
 
         //get the ip address of the url
         let ip_addr = resolver.lookup_ip(split[0]).unwrap().iter().next().unwrap().to_string();
-        
+        split.remove(0);
         //create the starting of the url
         let mut url: String = split_proto[0].to_owned();
         url.push_str("//");
@@ -36,6 +46,8 @@ pub mod api_requests {
             url.push_str("/");
             url.push_str(s);
         }
+
+        log::info!("url: {}", url);
 
         //get ready for the http/https request
         let client = Client::default();
@@ -56,8 +68,12 @@ pub mod api_requests {
     }
 
     pub async fn api_request() -> HttpResponse{
-        let res: String = get("http://httpbin.org/get").await.unwrap();
-        HttpResponse::Ok().json( res)
+        let mut res: String = get("http://httpbin.org/get").await.unwrap();
+        log::info!("response: {}", res);
+        res = res.to_ascii_lowercase().replace("-", "_");
+        
+        let resp: ApiResponse = serde_json::from_str(&res.to_ascii_lowercase().replace("/", "")).unwrap();
+        HttpResponse::Ok().json(resp)
     }
     
     

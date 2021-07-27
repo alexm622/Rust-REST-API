@@ -61,7 +61,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .configure(general_routes)
     })
-        .workers(10)
+        .workers(20)
         .keep_alive(15)
         .bind("127.0.0.1:8080")?
         .run()
