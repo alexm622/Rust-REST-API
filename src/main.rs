@@ -16,6 +16,7 @@ pub mod redis_tools{
 }
 pub mod spotify{
     pub mod spotify_structs;
+    pub mod algorithm;
 }
 pub mod utils{
 }
