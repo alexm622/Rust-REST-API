@@ -17,6 +17,8 @@ pub mod redis_tools{
 pub mod spotify{
     pub mod spotify_structs;
 }
+pub mod utils{
+}
 
 
 
@@ -39,7 +41,7 @@ pub fn general_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(web::resource("/redis&key={key}").route(web::get().to(db_request_handlers::redis_get_handler)));
     cfg.route("/redis", web::post().to(db_request_handlers::redis_post_handler));
     cfg.route("/apitest", web::get().to(api_requests::api_request));
-    
+    cfg.service(web::resource("/spotify&token={token}").route(web::get().to(api_requests::spotify_test)));
 }
 
 //post request handler
@@ -53,12 +55,17 @@ pub async fn health_check_handler() ->  impl Responder {
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
+
+    
+
     SimpleLogger::new()
     .with_level(LevelFilter::Off)
     .with_module_level("rest", LevelFilter::Info)
     .with_module_level("actix", LevelFilter::Info)
     .init()
     .unwrap();
+
+
     
     HttpServer::new(|| {
         App::new()

@@ -10,15 +10,6 @@ pub mod recommendations {
 }
 
 
-pub mod genres {
-    use serde::{Deserialize, Serialize};
-
-    #[derive(Debug, Serialize, Deserialize)]
-    pub struct Genres {
-        pub genres: Vec<String>,
-    }
-}
-
 pub mod related_artists {
     use super::artist::Artist;
 
@@ -87,9 +78,9 @@ pub mod artist {
         pub id: String,
         pub name: String,
         pub uri: String,
-        pub genres: Vec<String>,
-        pub followers: Followers,
-        pub images: Vec<Image>,
+        pub genres:  Option<Vec<String>>,
+        pub followers: Option<Followers>,
+        pub images: Option<Vec<Image>>,
     }
 
 

@@ -1,10 +1,10 @@
 pub mod api_requests {
-    use actix_web::{ HttpResponse};
+    use actix_web::{web, HttpResponse};
     use actix_web::client::Client;
-    use trust_dns_resolver::Resolver;
-    use trust_dns_resolver::config::*;
-    
+    use http::header;
+
     use serde::{Serialize, Deserialize};
+    use crate::spotify::spotify_structs::track::{Track};
 
     #[derive(Serialize,Deserialize)]
     pub struct ApiResponse {
@@ -21,37 +21,48 @@ pub mod api_requests {
         x_amzn_trace_id: String,
     }
 
+    #[derive(Serialize,Deserialize)]
+    pub struct SpotifyPath{
+        token: String,
+    }
+
     
     async fn get(link: &str) -> std::result::Result<String, ()>{
-        //create a dns resolver
-        let resolver = Resolver::new(ResolverConfig::default(), ResolverOpts::default()).unwrap();
-
-        //get the protocol from the url as arg
-        let split_proto = link.split("//").collect::<Vec<&str>>();
-
-        //split on "/"
-        let mut split = split_proto[1].split("/").collect::<Vec<&str>>();
-        
-
-        //get the ip address of the url
-        let ip_addr = resolver.lookup_ip(split[0]).unwrap().iter().next().unwrap().to_string();
-        split.remove(0);
-        //create the starting of the url
-        let mut url: String = split_proto[0].to_owned();
-        url.push_str("//");
-        url.push_str(&ip_addr[..]);
-
-        //add all the missing pieces/parts of the url
-        for s in split{
-            url.push_str("/");
-            url.push_str(s);
-        }
-
-        log::info!("url: {}", url);
 
         //get ready for the http/https request
-        let client = Client::default();
-        let resp = client.get(url).send().await;
+        let client = Client::build().disable_timeout().finish();
+        
+        let resp = client.get(link).send().await;
+
+        //deal with the results of the request
+        if resp.is_err(){
+            let err = resp.err().unwrap();
+            log::warn!("error encountered. that error was{}", err.to_string());
+
+            Ok("error".to_owned())
+        }else{
+            let vec = resp.ok().unwrap().body().await.unwrap().to_vec();
+            let response: String = String::from_utf8(vec.clone()).unwrap();
+            Ok(response)
+        }
+        
+    }
+    async fn spotify_get(link: &str, token: &str) -> std::result::Result<String, ()>{
+       
+
+        log::info!("url: {}", link);
+
+        //get ready for the http/https request
+        let client = Client::build().disable_timeout().finish();
+        let mut bearer_token: String = "Bearer ".to_owned();
+        bearer_token.push_str(token);
+        log::info!("Header {}: ", bearer_token);
+        let resp = client.get(link)
+        .header("Authorization", bearer_token)
+        .header(header::CONTENT_TYPE, "application/json")
+        .header("Accept", "application/json")
+        .send().await;
+        
 
         //deal with the results of the request
         if resp.is_err(){
@@ -72,7 +83,16 @@ pub mod api_requests {
         log::info!("response: {}", res);
         res = res.to_ascii_lowercase().replace("-", "_");
         
-        let resp: ApiResponse = serde_json::from_str(&res.to_ascii_lowercase().replace("/", "")).unwrap();
+        let resp: ApiResponse = serde_json::from_str(&res).unwrap();
+        HttpResponse::Ok().json(resp)
+    }
+
+    pub async fn spotify_test(path: web::Path<SpotifyPath>) -> HttpResponse{
+        let token: String = path.token.clone();
+        let mut res: String = spotify_get("https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl?market=ES", &token).await.unwrap();
+        log::info!("response: {}", res);
+        res = res.to_ascii_lowercase().replace("-", "_");
+        let resp: Track = serde_json::from_str(&res).unwrap();
         HttpResponse::Ok().json(resp)
     }
     
