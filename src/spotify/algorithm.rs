@@ -62,4 +62,23 @@ pub mod algorithm{
         }
         trackid            
      }
+
+     pub fn push_preference(before_track: String, trackid: String, preference: bool) -> String{
+         let inc: i32 = if preference {1}else{-1};
+         let res: Result<i32, redis::RedisError> = db_utils::increment_zset(&before_track, &trackid, inc);
+         if res.is_err(){
+             //do something
+         }
+         if preference{
+             trackid
+         }else{
+             before_track
+         }
+     }
+
+     
+
+     
+
+     
 }

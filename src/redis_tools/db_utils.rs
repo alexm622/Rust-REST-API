@@ -38,11 +38,11 @@ pub mod db_utils{
         }
     }
 
-    pub fn increment_zset(key: &String, item: &String, inc: u32) -> Result<u32, redis::RedisError>{
+    pub fn increment_zset(key: &String, item: &String, inc: i32) -> Result<i32, redis::RedisError>{
         log::info!("setting to db");
         let client = redis::Client::open("redis://10.0.249.54").unwrap();
         let con = client.get_connection()?;
-        let result : RedisResult<u32> = redis::cmd("ZINCRBY").arg(key).arg(inc).arg(item).query(&con);
+        let result : RedisResult<i32> = redis::cmd("ZINCRBY").arg(key).arg(inc).arg(item).query(&con);
         if result.is_err(){
             return Result::Ok(inc);
         }else{
