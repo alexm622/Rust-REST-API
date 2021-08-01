@@ -1,10 +1,10 @@
 pub mod api_requests {
-    use actix_web::{web, HttpResponse};
+    use actix_web::{HttpResponse};
     use actix_web::client::Client;
     use http::header;
 
     use serde::{Serialize, Deserialize};
-    use crate::spotify::spotify_structs::track::{Track};
+    
 
     #[derive(Serialize,Deserialize)]
     pub struct ApiResponse {
@@ -21,10 +21,7 @@ pub mod api_requests {
         x_amzn_trace_id: String,
     }
 
-    #[derive(Serialize,Deserialize)]
-    pub struct SpotifyPath{
-        token: String,
-    }
+    
 
     
     async fn get(link: &str) -> std::result::Result<String, ()>{
@@ -47,7 +44,7 @@ pub mod api_requests {
         }
         
     }
-    async fn spotify_get(link: &str, token: &str) -> std::result::Result<String, ()>{
+    pub async fn spotify_get(link: &str, token: &str) -> std::result::Result<String, ()>{
        
 
         log::info!("url: {}", link);
@@ -87,14 +84,7 @@ pub mod api_requests {
         HttpResponse::Ok().json(resp)
     }
 
-    pub async fn spotify_test(path: web::Path<SpotifyPath>) -> HttpResponse{
-        let token: String = path.token.clone();
-        let mut res: String = spotify_get("https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl?market=ES", &token).await.unwrap();
-        log::info!("response: {}", res);
-        res = res.to_ascii_lowercase().replace("-", "_");
-        let resp: Track = serde_json::from_str(&res).unwrap();
-        HttpResponse::Ok().json(resp)
-    }
+    
     
     
 }
