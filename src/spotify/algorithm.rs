@@ -45,9 +45,12 @@ pub mod algorithm{
             }
             
         }
-        let mut trackid: String = "non-existant".to_owned();
+        let mut trackid: String = "none".to_owned();
         let mut total_weight: i32 = 0;
         let mut new_vec: Vec<DbEntry> = Vec::new();
+        if db_entry[0].eq("none"){
+            //we need fallback to spotify recommended
+        }
         
         for entry in suggestions{
             total_weight += entry.weight;

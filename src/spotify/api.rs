@@ -4,6 +4,7 @@ pub mod spotify_api{
 
     use serde::{Serialize, Deserialize};
     use crate::spotify::spotify_structs::track::{Track};
+    use crate::spotify::spotify_structs::artist::{Artist};
     use crate::spotify::algorithm::{algorithm};
     use crate::rest_server::http_requester::{api_requests};
 
@@ -35,6 +36,25 @@ pub mod spotify_api{
         let resp: Track = serde_json::from_str(&res).unwrap();
         HttpResponse::Ok().json(resp)
     }
+
+    pub async fn get_spotify_track(token: String, track: String) -> Track{
+        let url: String = "https://api.spotify.com/v1/tracks/&?market=ES".to_owned().replace("&", &track);
+        let mut res: String = api_requests::spotify_get(&url, &token).await.unwrap();
+        res = res.to_ascii_lowercase().replace("-", "_");
+        let resp: Track = serde_json::from_str(&res).unwrap();
+        resp
+    }
+
+    pub async fn get_spotify_artist(token: String, artist: String) -> Artist{
+        let url: String = "https://api.spotify.com/v1/artists/&?market=ES".to_owned().replace("&", &artist);
+        let mut res: String = api_requests::spotify_get(&url, &token).await.unwrap();
+        res = res.to_ascii_lowercase().replace("-", "_");
+        let resp: Artist = serde_json::from_str(&res).unwrap();
+        resp
+    }
+
+    
+    
 
     pub async fn next_track(req: web::Json<NewTrackPost>) -> HttpResponse{
         let last_track: String = algorithm::push_preference(req.last_track.clone(), req.current_track.clone(), req.preference.clone());
