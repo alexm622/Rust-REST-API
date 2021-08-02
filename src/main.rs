@@ -16,6 +16,8 @@ pub mod redis_tools{
 }
 pub mod spotify{
     pub mod spotify_structs;
+    pub mod algorithm;
+    pub mod api;
 }
 pub mod utils{
 }
@@ -23,9 +25,8 @@ pub mod utils{
 
 
 use rest_server::db_tools::{db_request_handlers};
-
-
 use rest_server::http_requester::{api_requests};
+use spotify::api::{spotify_api};
 
 
 #[derive(Serialize, Deserialize)]
@@ -41,7 +42,7 @@ pub fn general_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(web::resource("/redis&key={key}").route(web::get().to(db_request_handlers::redis_get_handler)));
     cfg.route("/redis", web::post().to(db_request_handlers::redis_post_handler));
     cfg.route("/apitest", web::get().to(api_requests::api_request));
-    cfg.service(web::resource("/spotify&token={token}").route(web::get().to(api_requests::spotify_test)));
+    cfg.service(web::resource("/spotify&token={token}").route(web::get().to(spotify_api::spotify_generic)));
 }
 
 //post request handler

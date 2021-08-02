@@ -13,6 +13,57 @@ pub mod db_utils{
          
         result
     }
+
+    pub fn get_zset_rank(key: &String, item: &String) -> Result<u32, redis::RedisError>{
+        log::info!("fetching from db");
+        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let con = client.get_connection()?;
+        let result : RedisResult<u32> = redis::cmd("GET").arg(key).arg(item).query(&con);
+        if result.is_err(){
+            return Result::Ok(0);
+        }else{
+            return Result::Ok(result.unwrap());
+        }
+    }
+
+    pub fn set_zset_rank(key: &String, item: &String, rank: u32) -> Result<u32, redis::RedisError>{
+        log::info!("setting to db");
+        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let con = client.get_connection()?;
+        let result : RedisResult<u32> = redis::cmd("ZADD").arg(key).arg(item).arg(rank).query(&con);
+        if result.is_err(){
+            return Result::Ok(rank);
+        }else{
+            return Result::Ok(result.unwrap());
+        }
+    }
+
+    pub fn increment_zset(key: &String, item: &String, inc: i32) -> Result<i32, redis::RedisError>{
+        log::info!("setting to db");
+        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let con = client.get_connection()?;
+        let result : RedisResult<i32> = redis::cmd("ZINCRBY").arg(key).arg(inc).arg(item).query(&con);
+        if result.is_err(){
+            return Result::Ok(inc);
+        }else{
+            return Result::Ok(result.unwrap());
+        }
+    }
+
+    pub fn get_zrandmember(key: &String) -> Result<Vec<String>, redis::RedisError>{
+                log::info!("fetching from db");
+        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let con = client.get_connection()?;
+        let result : RedisResult<Vec<String>> = redis::cmd("ZRANDMEMBER").arg(key).arg("1").arg("WITHSCORES").query(&con);
+        if result.is_err(){
+            let mut vec: Vec<String> = Vec::new();
+            vec.push("none".to_owned());
+            return Result::Ok(vec);
+        }else{
+            return Result::Ok(result.unwrap());
+        }
+    }
+
     
     pub fn set_to_db(key: &String, value: &String ) -> redis::RedisResult<String>{
         log::info!("fetching from db");
