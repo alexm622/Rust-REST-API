@@ -1,6 +1,8 @@
 pub mod algorithm{
 
     use crate::redis_tools::db_utils::{db_utils};
+
+    use rand::Rng;
     
 
     struct DbEntry{
@@ -51,8 +53,9 @@ pub mod algorithm{
             total_weight += entry.weight;
             new_vec.push(entry);
         }
-        let mut random_number: i32 = 0;
         
+        let mut rng = rand::thread_rng();
+        let mut random_number: i32 = rng.gen_range(0..total_weight);
         for entry in new_vec{
             random_number -= entry.weight;
             if random_number < 0{
@@ -60,15 +63,13 @@ pub mod algorithm{
                 break;
             }
         }
+
         trackid            
      }
 
      pub fn push_preference(before_track: String, trackid: String, preference: bool) -> String{
          let inc: i32 = if preference {1}else{-1};
-         let res: Result<i32, redis::RedisError> = db_utils::increment_zset(&before_track, &trackid, inc);
-         if res.is_err(){
-             //do something
-         }
+         let _res: Result<i32, redis::RedisError> = db_utils::increment_zset(&before_track, &trackid, inc);
          if preference{
              trackid
          }else{
