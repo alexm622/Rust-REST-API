@@ -3,7 +3,7 @@ pub mod recommendations {
 
     use super::track::Track;
 
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct Recommendations{
         pub tracks: Vec<Track>,
     }    
@@ -15,7 +15,7 @@ pub mod related_artists {
 
     use serde::{Deserialize, Serialize};
 
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct RelatedArtists {
         pub artists: Vec<Artist>,
     }
@@ -30,7 +30,7 @@ pub mod track {
     use super::album::Album;
     use super::repeated_use::{ExternalUrls, ExternalIds};
 
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct Track {
         pub album: Album,
         pub artists: Vec<Artist>,
@@ -55,7 +55,7 @@ pub mod track {
 pub mod album {
     use serde::{Deserialize, Serialize};
     use super::repeated_use::{ExternalUrls, Image};
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct Album {
         pub external_urls: ExternalUrls,
         pub href: String,
@@ -71,7 +71,7 @@ pub mod artist {
     
     use super::repeated_use::{ExternalUrls, Followers, Image};
     
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct Artist {
         pub external_urls: ExternalUrls,
         pub href: String,
@@ -90,25 +90,25 @@ pub mod repeated_use{
     use serde::{Deserialize, Serialize};
 
     
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct Image {
         pub height: u32,
         pub url: String,
         pub width: u32,
     }
 
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct ExternalUrls {
         pub spotify: String,
     }
 
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct Followers {
         pub href: Option<String>,
         pub total: u32,
     }
 
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct ExternalIds {
         pub isrc: String,
     }
