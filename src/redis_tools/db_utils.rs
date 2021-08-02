@@ -7,7 +7,7 @@ pub mod db_utils{
 
     pub fn fetch_from_db(key: &String ) -> redis::RedisResult<String>{
         log::info!("fetching from db");
-        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let client = redis::Client::open("redis://127.0.0.1").unwrap();
         let con = client.get_connection()?;
         let result : RedisResult<String> = redis::cmd("GET").arg(key).query(&con);
          
@@ -16,7 +16,7 @@ pub mod db_utils{
 
     pub fn get_zset_rank(key: &String, item: &String) -> Result<u32, redis::RedisError>{
         log::info!("fetching from db");
-        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let client = redis::Client::open("redis://127.0.0.1").unwrap();
         let con = client.get_connection()?;
         let result : RedisResult<u32> = redis::cmd("GET").arg(key).arg(item).query(&con);
         if result.is_err(){
@@ -28,7 +28,7 @@ pub mod db_utils{
 
     pub fn set_zset_rank(key: &String, item: &String, rank: u32) -> Result<u32, redis::RedisError>{
         log::info!("setting to db");
-        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let client = redis::Client::open("redis://127.0.0.1").unwrap();
         let con = client.get_connection()?;
         let result : RedisResult<u32> = redis::cmd("ZADD").arg(key).arg(item).arg(rank).query(&con);
         if result.is_err(){
@@ -40,7 +40,7 @@ pub mod db_utils{
 
     pub fn increment_zset(key: &String, item: &String, inc: i32) -> Result<i32, redis::RedisError>{
         log::info!("setting to db");
-        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let client = redis::Client::open("redis://127.0.0.1").unwrap();
         let con = client.get_connection()?;
         let result : RedisResult<i32> = redis::cmd("ZINCRBY").arg(key).arg(inc).arg(item).query(&con);
         if result.is_err(){
@@ -52,7 +52,7 @@ pub mod db_utils{
 
     pub fn get_zrandmember(key: &String) -> Result<Vec<String>, redis::RedisError>{
                 log::info!("fetching from db");
-        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let client = redis::Client::open("redis://127.0.0.1").unwrap();
         let con = client.get_connection()?;
         let result : RedisResult<Vec<String>> = redis::cmd("ZRANDMEMBER").arg(key).arg("1").arg("WITHSCORES").query(&con);
         if result.is_err(){
@@ -67,7 +67,7 @@ pub mod db_utils{
     
     pub fn set_to_db(key: &String, value: &String ) -> redis::RedisResult<String>{
         log::info!("fetching from db");
-        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let client = redis::Client::open("redis://127.0.0.1").unwrap();
         let con = client.get_connection()?;
         let result : RedisResult<String> = redis::cmd("SET").arg(key).arg(value).query(&con);
         

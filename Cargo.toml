@@ -14,3 +14,5 @@ log = "0.4.8"
 redis = "0.8.0"
 trust-dns-resolver = "0.20.3"
 http = "0.2.4"
+rand = "0.8.4"
+
