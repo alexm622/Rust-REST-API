@@ -43,6 +43,7 @@ pub fn general_routes(cfg: &mut web::ServiceConfig) {
     cfg.route("/redis", web::post().to(db_request_handlers::redis_post_handler));
     cfg.route("/apitest", web::get().to(api_requests::api_request));
     cfg.service(web::resource("/spotify&token={token}").route(web::get().to(spotify_api::spotify_generic)));
+    cfg.route("/next", web::post().to(spotify_api::next_track));
 }
 
 //post request handler
