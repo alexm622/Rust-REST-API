@@ -40,7 +40,7 @@ pub mod spotify_api{
         let mut res: String = api_requests::spotify_get("https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl?market=US", &token).await.unwrap();
         log::info!("response: {}", res);
         res = res.replace("-", "_");
-        log::info!("got a response of {}", res);
+        //log::info!("got a response of {}", res);
         let resp: Track = serde_json::from_str(&res).unwrap();
         HttpResponse::Ok().json(resp)
     }
@@ -51,7 +51,7 @@ pub mod spotify_api{
         log::info!("requesting from url:{}", url.clone());
         let mut res: String = api_requests::spotify_get(&url, &token).await.unwrap();
         res = res.replace("-", "_");
-        log::info!("got a response of {}", res);
+        //log::info!("got a response of {}", res);
         let resp: Track = serde_json::from_str(&res).unwrap();
         resp
     }
@@ -62,7 +62,7 @@ pub mod spotify_api{
         log::info!("requesting from url:{}", url.clone());
         let mut res: String = api_requests::spotify_get(&url, &token).await.unwrap();
         res = res.replace("-", "_");
-        log::info!("got a response of {}", res);
+        //log::info!("got a response of {}", res);
         let resp: Artist = serde_json::from_str(&res).unwrap();
         resp
     }
@@ -74,7 +74,7 @@ pub mod spotify_api{
         log::info!("requesting from url:{}", url.clone());
         let mut res: String = api_requests::spotify_get(&url, &token).await.unwrap();
         res = res.replace("-", "_");
-        log::info!("got a response of {}", res);
+        //log::info!("got a response of {}", res);
         let resp: Recommendations = serde_json::from_str(&res).unwrap();
         resp
     }

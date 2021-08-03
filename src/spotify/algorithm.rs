@@ -29,28 +29,29 @@ pub mod algorithm{
             
             let temp = db_utils::get_zrandmember(&trackid);
             loop_count += 1;
-            if temp.is_err(){
+            db_entry = temp.unwrap();
+            if db_entry.len() == 0{
                 log::warn!("nothing was found in the database");
                 db_entry = Vec::new();
                 db_entry.push("none".to_owned());
                 break;
             }
-            db_entry = temp.unwrap();
+            
             if suggestions.len() > 4{
                 log::info!("max num of suggestions found");
                 break;
             }
 
-            if loop_count > 10{
+            if loop_count > 5{
                 log::info!("max num of iterations done");
-                db_entry = Vec::new();
-                db_entry.push("none".to_owned());
+                
                 break;
             }
 
             log::info!("db_entry: {}", db_entry[0].clone());
 
-            if db_entry[1].parse::<i32>().unwrap() < 0{
+            if db_entry[1].parse::<i32>().unwrap() < 1{
+                log::info!("db entry of: {} did not have a high enough weight", db_entry[0].clone());
                 continue;
             }else{
                 log::info!("adding trackid {} with weight {}",  db_entry[0].clone(), db_entry[1].clone());
@@ -79,6 +80,13 @@ pub mod algorithm{
             let genres: Vec<String> = artist.genres.unwrap().clone();
             let genre: String = genres[0].clone();
             let recommendations: Recommendations = spotify_api::get_recommended(token.clone(), artist_id.clone(), trackid.clone(), genre.clone()).await;
+            for recommendation  in recommendations.clone().tracks{
+                //dump reccomend into db
+                if db_utils::get_zset_rank(&trackid, &recommendation.id.clone()).is_err(){
+                    let _res = db_utils::set_zset_rank(&trackid, &recommendation.id, 1);
+                }
+                
+            }
             
             if trackid.eq("0"){
                 Err(())

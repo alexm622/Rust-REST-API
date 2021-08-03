@@ -32,7 +32,7 @@ pub mod track {
 
     #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct Track {
-        pub album: Album,
+        pub album: Option<Album>,
         pub artists: Vec<Artist>,
         pub disc_number: i32,
         pub duration_ms: u32,
