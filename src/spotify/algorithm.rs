@@ -24,6 +24,7 @@ pub mod algorithm{
         suggestions = Vec::new();
         log::info!("starting algorithm loop");
         log::info!("trackid is {}", trackid.clone());
+        let count = db_utils::get_zcount(&trackid).unwrap();
         
         loop {
             
@@ -37,7 +38,7 @@ pub mod algorithm{
                 break;
             }
             
-            if suggestions.len() > 4{
+            if suggestions.len() > count as usize{
                 log::info!("max num of suggestions found");
                 break;
             }

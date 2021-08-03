@@ -76,6 +76,22 @@ pub mod db_utils{
         }
     }
 
+    pub fn get_zcount(key: &String) -> Result<i32, redis::RedisError>{
+        log::info!("fetching from db");
+        let client = redis::Client::open("redis://10.0.249.54").unwrap();
+        let con = client.get_connection()?;
+        let result : RedisResult<i32> = redis::cmd("ZCOUNT").arg(key).arg(1).arg("+inf").query(&con);
+        if result.is_err(){
+            log::error!("ZCOUNT failed");
+            let result_err : RedisError = result.unwrap_err();
+            log::error!("error: {}", result_err.to_string());
+            log::error!("error {}", result_err.category());
+            return Result::Ok(0);
+        }else{
+            return Result::Ok(result.unwrap());
+        }
+    }
+
     
     pub fn set_to_db(key: &String, value: &String ) -> redis::RedisResult<String>{
         log::info!("fetching from db");
