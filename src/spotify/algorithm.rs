@@ -83,10 +83,7 @@ pub mod algorithm{
             let recommendations: Recommendations = spotify_api::get_recommended(token.clone(), artist_id.clone(), trackid.clone(), genre.clone()).await;
             for recommendation  in recommendations.clone().tracks{
                 //dump reccomend into db
-                if db_utils::get_zset_rank(&trackid, &recommendation.id.clone()).is_err(){
-                    let _res = db_utils::set_zset_rank(&trackid, &recommendation.id, 1);
-                }
-                
+                let _res = db_utils::set_zset_rank(&trackid, &recommendation.id, 1);          
             }
             
             if trackid.eq("0"){
