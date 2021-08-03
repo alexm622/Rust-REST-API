@@ -68,7 +68,7 @@ pub mod spotify_api{
     }
 
     pub async fn get_recommended(token: String, artist: String, trackid: String, genre: String) -> Recommendations{
-        let url: String = "https://api.spotify.com/v1/recommendations?limit=2&seed_artists=^&seed_genres=*&seed_tracks=%&market=US".to_owned()
+        let url: String = "https://api.spotify.com/v1/recommendations?limit=10&seed_artists=^&seed_genres=*&seed_tracks=%&market=US".to_owned()
             .replace("*", &genre).replace("^", &artist).replace("%", &trackid).replace(" ", "%20");
         log::info!("getting recommended track info");
         log::info!("requesting from url:{}", url.clone());
@@ -84,9 +84,10 @@ pub mod spotify_api{
 
     pub async fn next_track(req: web::Json<NewTrackPost>) -> HttpResponse{
         log::info!("data was posted successfully");
-        let last_track: String = algorithm::push_preference(req.last_track.clone(), req.current_track.clone(), req.preference.clone());
-        let next_track: String = algorithm::get_recommended(last_track.clone(), req.user_token.clone()).await.unwrap();
+        let last_track = if req.preference {req.current_track.clone()} else {req.last_track.clone()};
         
+        let next_track: String = algorithm::get_recommended(req.last_track.clone(), req.user_token.clone()).await.unwrap();
+        let _last_track: String = algorithm::push_preference(req.last_track.clone(), req.current_track.clone(), req.preference.clone());
         
         HttpResponse::Ok().json(NewTrackResp{
             last_track: last_track,
