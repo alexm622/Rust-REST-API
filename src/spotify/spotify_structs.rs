@@ -43,7 +43,7 @@ pub mod track {
         pub id: String,
         pub is_local: bool,
         pub name: String,
-        pub preview_url: String,
+        pub preview_url: Option<String>,
         pub track_number: i32,
         pub uri: String,
     }

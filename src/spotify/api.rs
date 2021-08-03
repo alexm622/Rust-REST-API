@@ -68,7 +68,7 @@ pub mod spotify_api{
     }
 
     pub async fn get_recommended(token: String, artist: String, trackid: String, genre: String) -> Recommendations{
-        let url: String = "https://api.spotify.com/v1/recommendations?limit=10&seed_artists=^&seed_genres=*&seed_tracks=%&market=US".to_owned()
+        let url: String = "https://api.spotify.com/v1/recommendations?limit=2&seed_artists=^&seed_genres=*&seed_tracks=%&market=US".to_owned()
             .replace("*", &genre).replace("^", &artist).replace("%", &trackid).replace(" ", "%20");
         log::info!("getting recommended track info");
         log::info!("requesting from url:{}", url.clone());
